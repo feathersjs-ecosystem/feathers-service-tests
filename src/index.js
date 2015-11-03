@@ -3,15 +3,15 @@
 import chai from 'chai';
 import feathers from 'feathers';
 
-export default function(people, _ids) {
+export default function(people, _ids, idProp = 'id') {
   const expect = chai.expect;
   const errors = feathers.errors.types;
 
   describe('get', () => {
     it('returns an instance that exists', done => {
       people.get(_ids.Doug, {}, (error, data) => {
-        expect(error).to.be.null;
-        expect(data.id).to.equal(_ids.Doug);
+        expect(!error).to.be.ok;
+        expect(data[idProp]).to.equal(_ids.Doug);
         expect(data.name).to.equal('Doug');
         done();
       });
@@ -40,7 +40,7 @@ export default function(people, _ids) {
   describe('remove', () => {
     it('deletes an existing instance and returns the deleted instance', done => {
       people.remove(_ids.Doug, {}, function(error, data) {
-        expect(error).to.be.null;
+        expect(!error).to.be.ok;
         expect(data).to.be.ok;
         expect(data.name).to.equal('Doug');
         done();
@@ -54,13 +54,13 @@ export default function(people, _ids) {
         name: 'Bob',
         age: 25
       }, {}, (err, bob) => {
-        _ids.Bob = bob.id;
+        _ids.Bob = bob[idProp];
 
         people.create({
           name: 'Alice',
           age: 19
         }, {}, (err, alice) => {
-          _ids.Alice = alice.id;
+          _ids.Alice = alice[idProp];
 
           done();
         });
@@ -77,7 +77,7 @@ export default function(people, _ids) {
 
     it('returns all items', done => {
       people.find({}, (error, data) => {
-        expect(error).to.be.null;
+        expect(!error).to.be.ok;
         expect(data).to.be.instanceof(Array);
         expect(data.length).to.equal(3);
         done();
@@ -88,7 +88,7 @@ export default function(people, _ids) {
       var params = { query: { name: 'Alice' } };
 
       people.find(params, (error, data) => {
-        expect(error).to.be.null;
+        expect(!error).to.be.ok;
         expect(data).to.be.instanceof(Array);
         expect(data.length).to.equal(1);
         expect(data[0].name).to.equal('Alice');
@@ -100,7 +100,7 @@ export default function(people, _ids) {
       var params = { query: { name: 'Alice', age: 19 } };
 
       people.find(params, (error, data) => {
-        expect(error).to.be.null;
+        expect(!error).to.be.ok;
         expect(data).to.be.instanceof(Array);
         expect(data.length).to.equal(1);
         expect(data[0].name).to.equal('Alice');
@@ -117,7 +117,7 @@ export default function(people, _ids) {
         };
 
         people.find(params, (error, data) => {
-          expect(error).to.be.null;
+          expect(!error).to.be.ok;
           expect(data.length).to.equal(3);
           expect(data[0].name).to.equal('Alice');
           expect(data[1].name).to.equal('Bob');
@@ -134,7 +134,7 @@ export default function(people, _ids) {
         };
 
         people.find(params, (error, data) => {
-          expect(error).to.be.null;
+          expect(!error).to.be.ok;
           expect(data.length).to.equal(2);
           done();
         });
@@ -149,7 +149,7 @@ export default function(people, _ids) {
         };
 
         people.find(params, (error, data) => {
-          expect(error).to.be.null;
+          expect(!error).to.be.ok;
           expect(data.length).to.equal(2);
           expect(data[0].name).to.equal('Bob');
           expect(data[1].name).to.equal('Doug');
@@ -166,7 +166,7 @@ export default function(people, _ids) {
         };
 
         people.find(params, (error, data) => {
-          expect(error).to.be.null;
+          expect(!error).to.be.ok;
           expect(data.length).to.equal(1);
           expect(data[0].name).to.equal('Alice');
           expect(data[0].age).to.be.undefined;
@@ -186,7 +186,7 @@ export default function(people, _ids) {
         };
 
         people.find(params, (error, data) => {
-          expect(error).to.be.null;
+          expect(!error).to.be.ok;
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           expect(data[0].name).to.equal('Alice');
@@ -206,7 +206,7 @@ export default function(people, _ids) {
         };
 
         people.find(params, (error, data) => {
-          expect(error).to.be.null;
+          expect(!error).to.be.ok;
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           expect(data[0].name).to.equal('Alice');
@@ -225,7 +225,7 @@ export default function(people, _ids) {
         };
 
         people.find(params, (error, data) => {
-          expect(error).to.be.null;
+          expect(!error).to.be.ok;
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(1);
           expect(data[0].name).to.equal('Doug');
@@ -243,7 +243,7 @@ export default function(people, _ids) {
         };
 
         people.find(params, (error, data) => {
-          expect(error).to.be.null;
+          expect(!error).to.be.ok;
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           done();
@@ -260,7 +260,7 @@ export default function(people, _ids) {
         };
 
         people.find(params, (error, data) => {
-          expect(error).to.be.null;
+          expect(!error).to.be.ok;
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           done();
@@ -277,7 +277,7 @@ export default function(people, _ids) {
         };
 
         people.find(params, (error, data) => {
-          expect(error).to.be.null;
+          expect(!error).to.be.ok;
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(1);
           done();
@@ -294,7 +294,7 @@ export default function(people, _ids) {
         };
 
         people.find(params, (error, data) => {
-          expect(error).to.be.null;
+          expect(!error).to.be.ok;
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           done();
@@ -311,7 +311,7 @@ export default function(people, _ids) {
         };
 
         people.find(params, (error, data) => {
-          expect(error).to.be.null;
+          expect(!error).to.be.ok;
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           done();
@@ -342,7 +342,7 @@ export default function(people, _ids) {
       };
 
       people.find(params, (error, data) => {
-        expect(error).to.be.null;
+        expect(!error).to.be.ok;
         expect(data).to.be.instanceof(Array);
         expect(data.length).to.equal(2);
         done();
@@ -354,10 +354,10 @@ export default function(people, _ids) {
   describe('update', () => {
     it('replaces an existing instance', done => {
       people.update(_ids.Doug, { name: 'Dougler' }, {}, (error, data) => {
-        expect(error).to.be.null;
-        expect(data.id).to.equal(_ids.Doug);
+        expect(!error).to.be.ok;
+        expect(data[idProp]).to.equal(_ids.Doug);
         expect(data.name).to.equal('Dougler');
-        expect(data.age).to.be.null;
+        expect(!data.age).to.be.ok;
         done();
       });
     });
@@ -376,8 +376,8 @@ export default function(people, _ids) {
   describe('patch', () => {
     it('updates an existing instance', done => {
       people.patch(_ids.Doug, { name: 'PatchDoug' }, {}, (error, data) => {
-        expect(error).to.be.null;
-        expect(data.id).to.equal(_ids.Doug);
+        expect(!error).to.be.ok;
+        expect(data[idProp]).to.equal(_ids.Doug);
         expect(data.name).to.equal('PatchDoug');
         expect(data.age).to.equal(32);
         done();
@@ -401,7 +401,7 @@ export default function(people, _ids) {
         name: 'Bill',
         age: 40
       }, {}, (error, data) => {
-        expect(error).to.be.null;
+        expect(!error).to.be.ok;
         expect(data).to.be.instanceof(Object);
         expect(data).to.not.be.empty;
         expect(data.name).to.equal('Bill');
@@ -422,7 +422,7 @@ export default function(people, _ids) {
       ];
 
       people.create(items, {}, (error, data) => {
-        expect(error).to.be.null;
+        expect(!error).to.be.ok;
         expect(data).to.not.be.empty;
         done();
       });
