@@ -300,8 +300,8 @@ export default function(people, _ids, errors, idProp = 'id') {
       it('can $not', done => {
         var params = {
           query: {
-            age: {
-              $not: 25
+            $not: {
+              age: 25
             }
           }
         };
