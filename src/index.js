@@ -1,12 +1,8 @@
 /*jshint expr: true*/
 
-import chai from 'chai';
-import feathers from 'feathers';
+import { expect } from 'chai';
 
-export default function(people, _ids, idProp = 'id') {
-  const expect = chai.expect;
-  const errors = feathers.errors.types;
-
+export default function(people, _ids, errors, idProp = 'id') {
   describe('get', () => {
     it('returns an instance that exists', done => {
       people.get(_ids.Doug, {}, (error, data) => {
