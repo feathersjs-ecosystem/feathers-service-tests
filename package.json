@@ -1,7 +1,7 @@
 {
   "name": "feathers-service-tests",
   "description": "A standardized testing harness for Feathers services",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "homepage": "https://github.com/feathersjs/feathers-service-tests",
   "main": "lib/",
   "keywords": [
