@@ -191,6 +191,23 @@ export default function(people, _ids, errors, idProp = 'id') {
         });
       });
 
+      it.skip('can $not', done => {
+        var params = {
+          query: {
+            age: { $not: 19 },
+            name: { $not: 'Doug' }
+          }
+        };
+
+        people.find(params, (error, data) => {
+          expect(!error).to.be.ok;
+          expect(data).to.be.instanceof(Array);
+          expect(data.length).to.equal(1);
+          expect(data[0].name).to.equal('Bob');
+          done();
+        });
+      });
+
       it('can $in', done => {
         var params = {
           query: {
