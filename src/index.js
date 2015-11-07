@@ -7,7 +7,7 @@ export default function(people, _ids, errors, idProp = 'id') {
     it('returns an instance that exists', done => {
       people.get(_ids.Doug, {}, (error, data) => {
         expect(!error).to.be.ok;
-        expect(data[idProp]).to.equal(_ids.Doug);
+        expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
         expect(data.name).to.equal('Doug');
         done();
       });
@@ -50,13 +50,13 @@ export default function(people, _ids, errors, idProp = 'id') {
         name: 'Bob',
         age: 25
       }, {}, (err, bob) => {
-        _ids.Bob = bob[idProp];
+        _ids.Bob = bob[idProp].toString();
 
         people.create({
           name: 'Alice',
           age: 19
         }, {}, (err, alice) => {
-          _ids.Alice = alice[idProp];
+          _ids.Alice = alice[idProp].toString();
 
           done();
         });
@@ -351,7 +351,7 @@ export default function(people, _ids, errors, idProp = 'id') {
     it('replaces an existing instance', done => {
       people.update(_ids.Doug, { name: 'Dougler' }, {}, (error, data) => {
         expect(!error).to.be.ok;
-        expect(data[idProp]).to.equal(_ids.Doug);
+        expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
         expect(data.name).to.equal('Dougler');
         expect(!data.age).to.be.ok;
         done();
@@ -373,7 +373,7 @@ export default function(people, _ids, errors, idProp = 'id') {
     it('updates an existing instance', done => {
       people.patch(_ids.Doug, { name: 'PatchDoug' }, {}, (error, data) => {
         expect(!error).to.be.ok;
-        expect(data[idProp]).to.equal(_ids.Doug);
+        expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
         expect(data.name).to.equal('PatchDoug');
         expect(data.age).to.equal(32);
         done();
