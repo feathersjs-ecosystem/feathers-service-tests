@@ -119,7 +119,7 @@ query: {
 }
 ```
 
-# $ne
+### $ne
 
 Find all records that do not contain the given property value, for example anybody not age 25:
 
@@ -131,7 +131,7 @@ query: {
 }
 ```
 
-# $or
+### $or
 
 Find all records that match any of the given objects. For example, find all users name Bob or Alice:
 
