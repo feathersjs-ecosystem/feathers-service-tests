@@ -297,11 +297,11 @@ export default function(people, _ids, errors, idProp = 'id') {
         });
       });
 
-      it('can $not', done => {
+      it('can $ne', done => {
         var params = {
           query: {
             age: {
-              $not: 25
+              $ne: 25
             }
           }
         };
