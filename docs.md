@@ -23,7 +23,6 @@ query: {
 }
 ```
 
-
 ### `$skip`
 
 `$skip` will skip the specified number of results:
@@ -35,7 +34,6 @@ query: {
   $skip: 2
 }
 ```
-
 
 ### `$sort`
 
@@ -55,7 +53,6 @@ query: {
 }
 ```
 
-
 ### `$select`
 
 `$select` support in a query allows you to pick which fields to include or exclude in the results.  Note: you can use the include syntax or the exclude syntax, not both together.  See the section on [`Projections`](https://github.com/louischatriot/nedb#projections) in the NeDB docs.
@@ -73,9 +70,18 @@ query: {
 }
 ```
 
+
 ## Filter criteria
 
-In addition to sorting and pagination, properties can also be filtered by criteria. The following criteria are supported.
+In addition to sorting and pagination, properties can also be filtered by criteria. Standard criteria can just be added to the query. For example, the following find all users with the name `Alice`:
+
+```js
+query: {
+  name: 'Alice'
+}
+```
+
+Additionally, the following advanced criteria are supported for each property.
 
 ### $in, $nin
 
