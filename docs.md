@@ -1,3 +1,23 @@
+## Pagination
+
+When initializing the service you can set the following pagination options in the `paginate` object:
+
+- `default` - Sets the default number of items
+- `max` - Sets the maximum allowed number of items per page (even if the `$limit` query parameter is set higher)
+
+When `paginate` is set, `find` will, instead of an Array, return an object in the follow form:
+
+```
+{
+  "total": "<total number of records>",
+  "limit": "<max number of items per page>",
+  "count": "<returned number of items>",
+  "skip": "<number of skipped items>",
+  "data": [/* data */]
+}
+```
+
+
 ## Query Parameters
 
 The `find` API allows the use of `$limit`, `$skip`, `$sort`, and `$select` in the query.  These special parameters can be passed directly inside the query object:
@@ -69,7 +89,6 @@ query: {
   $select: {'age': 0}
 }
 ```
-
 
 ## Filter criteria
 

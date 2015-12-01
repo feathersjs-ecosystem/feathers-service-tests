@@ -3,31 +3,38 @@
 import { expect } from 'chai';
 
 export default function(people, _ids, errors, idProp = 'id') {
+  describe('extend', () => {
+    it('extends and uses extended method', done => {
+      let now = new Date().toString();
+      let extended = people.extend({
+        create(data) {
+          data.createdAt = now;
+          return this._super.apply(this, arguments);
+        }
+      });
+
+      extended.create({ name: 'Dave' }).then(data => {
+        return extended.remove(data[idProp]);
+      }).then(data => {
+        expect(data.createdAt).to.equal(now);
+        done();
+      }).catch(done);
+    });
+  });
+
   describe('get', () => {
     it('returns an instance that exists', done => {
-      people.get(_ids.Doug, {}, (error, data) => {
-        expect(!error).to.be.ok;
+      people.get(_ids.Doug).then(data => {
         expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
         expect(data.name).to.equal('Doug');
         done();
-      });
-    });
-
-    it('returns an error when no id is provided', done => {
-      people.get((error, data) => {
-        expect(error).to.be.ok;
-        expect(error instanceof errors.BadRequest).to.be.ok;
-        expect(data).to.be.undefined;
-        done();
-      });
+      }).catch(done);
     });
 
     it('returns NotFound error for non-existing id', done => {
-      people.get('abc', {}, (error, data) => {
-        expect(error).to.be.ok;
+      people.get('abc').catch(error => {
         expect(error instanceof errors.NotFound).to.be.ok;
         expect(error.message).to.equal('No record found for id \'abc\'');
-        expect(data).to.be.undefined;
         done();
       });
     });
@@ -35,12 +42,24 @@ export default function(people, _ids, errors, idProp = 'id') {
 
   describe('remove', () => {
     it('deletes an existing instance and returns the deleted instance', done => {
-      people.remove(_ids.Doug, {}, function(error, data) {
-        expect(!error).to.be.ok;
+      people.remove(_ids.Doug).then(data => {
         expect(data).to.be.ok;
         expect(data.name).to.equal('Doug');
         done();
-      });
+      }).catch(done);
+    });
+
+    it('deletes multiple instance', done => {
+      people.create({ name: 'Dave', age: 29, created: true }).then(() => {
+        return people.create({ name: 'David', age: 3, created: true });
+      }).then(() => {
+        return people.remove(null, { query: { created: true } });
+      }).then(data => {
+        expect(data.length).to.equal(2);
+        expect(data[0].name).to.equal('Dave');
+        expect(data[1].name).to.equal('David');
+        done();
+      }).catch(done);
     });
   });
 
@@ -49,59 +68,53 @@ export default function(people, _ids, errors, idProp = 'id') {
       people.create({
         name: 'Bob',
         age: 25
-      }, {}, (err, bob) => {
+      }).then(bob => {
         _ids.Bob = bob[idProp].toString();
 
-        people.create({
+        return people.create({
           name: 'Alice',
           age: 19
-        }, {}, (err, alice) => {
-          _ids.Alice = alice[idProp].toString();
-
-          done();
         });
-      });
+      }).then(alice => {
+        _ids.Alice = alice[idProp].toString();
+        done();
+      }).catch(done);
     });
 
     afterEach(done => {
-      people.remove(_ids.Bob, {}, () => {
-        people.remove(_ids.Alice, {}, () => {
-          done();
-        });
-      });
+      people.remove(_ids.Bob).then(() => {
+        return people.remove(_ids.Alice);
+      }).then(() => done()).catch(done);
     });
 
     it('returns all items', done => {
-      people.find({}, (error, data) => {
-        expect(!error).to.be.ok;
+      people.find().then(data => {
         expect(data).to.be.instanceof(Array);
         expect(data.length).to.equal(3);
         done();
-      });
+      }).catch(done);
     });
 
     it('filters results by a single parameter', done => {
       var params = { query: { name: 'Alice' } };
 
-      people.find(params, (error, data) => {
-        expect(!error).to.be.ok;
+      people.find(params).then(data => {
         expect(data).to.be.instanceof(Array);
         expect(data.length).to.equal(1);
         expect(data[0].name).to.equal('Alice');
         done();
-      });
+      }).catch(done);
     });
 
     it('filters results by multiple parameters', done => {
       var params = { query: { name: 'Alice', age: 19 } };
 
-      people.find(params, (error, data) => {
-        expect(!error).to.be.ok;
+      people.find(params).then(data => {
         expect(data).to.be.instanceof(Array);
         expect(data.length).to.equal(1);
         expect(data[0].name).to.equal('Alice');
         done();
-      });
+      }).catch(done);
     });
 
     describe('special filters', ()  => {
@@ -112,14 +125,13 @@ export default function(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params, (error, data) => {
-          expect(!error).to.be.ok;
+        people.find(params).then(data => {
           expect(data.length).to.equal(3);
           expect(data[0].name).to.equal('Alice');
           expect(data[1].name).to.equal('Bob');
           expect(data[2].name).to.equal('Doug');
           done();
-        });
+        }).catch(done);
       });
 
       it('can $limit', done => {
@@ -129,11 +141,10 @@ export default function(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params, (error, data) => {
-          expect(!error).to.be.ok;
+        people.find(params).then(data => {
           expect(data.length).to.equal(2);
           done();
-        });
+        }).catch(done);
       });
 
       it('can $skip', done => {
@@ -144,13 +155,12 @@ export default function(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params, (error, data) => {
-          expect(!error).to.be.ok;
+        people.find(params).then(data => {
           expect(data.length).to.equal(2);
           expect(data[0].name).to.equal('Bob');
           expect(data[1].name).to.equal('Doug');
           done();
-        });
+        }).catch(done);
       });
 
       it('can $select', done => {
@@ -161,13 +171,12 @@ export default function(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params, (error, data) => {
-          expect(!error).to.be.ok;
+        people.find(params).then(data => {
           expect(data.length).to.equal(1);
           expect(data[0].name).to.equal('Alice');
           expect(data[0].age).to.be.undefined;
           done();
-        });
+        }).catch(done);
       });
 
       it('can $or', done => {
@@ -181,14 +190,13 @@ export default function(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params, (error, data) => {
-          expect(!error).to.be.ok;
+        people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           expect(data[0].name).to.equal('Alice');
           expect(data[1].name).to.equal('Bob');
           done();
-        });
+        }).catch(done);
       });
 
       it.skip('can $not', done => {
@@ -199,13 +207,12 @@ export default function(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params, (error, data) => {
-          expect(!error).to.be.ok;
+        people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(1);
           expect(data[0].name).to.equal('Bob');
           done();
-        });
+        }, done);
       });
 
       it('can $in', done => {
@@ -218,14 +225,13 @@ export default function(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params, (error, data) => {
-          expect(!error).to.be.ok;
+        people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           expect(data[0].name).to.equal('Alice');
           expect(data[1].name).to.equal('Bob');
           done();
-        });
+        }).catch(done);
       });
 
       it('can $nin', done => {
@@ -237,13 +243,12 @@ export default function(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params, (error, data) => {
-          expect(!error).to.be.ok;
+        people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(1);
           expect(data[0].name).to.equal('Doug');
           done();
-        });
+        }).catch(done);
       });
 
       it('can $lt', done => {
@@ -255,12 +260,11 @@ export default function(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params, (error, data) => {
-          expect(!error).to.be.ok;
+        people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           done();
-        });
+        }).catch(done);
       });
 
       it('can $lte', done => {
@@ -272,12 +276,11 @@ export default function(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params, (error, data) => {
-          expect(!error).to.be.ok;
+        people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           done();
-        });
+        }).catch(done);
       });
 
       it('can $gt', done => {
@@ -289,12 +292,11 @@ export default function(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params, (error, data) => {
-          expect(!error).to.be.ok;
+        people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(1);
           done();
-        });
+        }).catch(done);
       });
 
       it('can $gte', done => {
@@ -306,12 +308,11 @@ export default function(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params, (error, data) => {
-          expect(!error).to.be.ok;
+        people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           done();
-        });
+        }).catch(done);
       });
 
       it('can $ne', done => {
@@ -323,12 +324,11 @@ export default function(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params, (error, data) => {
-          expect(!error).to.be.ok;
+        people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           done();
-        });
+        }).catch(done);
       });
 
       it.skip('can $populate', done => {
@@ -362,25 +362,55 @@ export default function(people, _ids, errors, idProp = 'id') {
       });
     });
 
+    describe('paginate', function() {
+      before(() => {
+        people.paginate = { default: 1, max: 2 };
+      });
+
+      after(() => {
+        people.paginate = {};
+      });
+
+      it('returns paginated object, paginates by default and shows total', done => {
+        people.find().then(paginator => {
+          expect(paginator.total).to.equal(3);
+          expect(paginator.limit).to.equal(1);
+          expect(paginator.count).to.equal(1);
+          expect(paginator.skip).to.equal(0);
+          expect(paginator.data[0].name).to.equal('Doug');
+          done();
+        }).catch(done);
+      });
+
+      it('paginates max and skips', done => {
+        people.find({ query: { $skip: 1, $limit: 4 } }).then(paginator => {
+          expect(paginator.total).to.equal(3);
+          expect(paginator.limit).to.equal(2);
+          expect(paginator.count).to.equal(2);
+          expect(paginator.skip).to.equal(1);
+          expect(paginator.data[0].name).to.equal('Bob');
+          expect(paginator.data[1].name).to.equal('Alice');
+          done();
+        }).catch(done);
+      });
+    });
   });
 
   describe('update', () => {
     it('replaces an existing instance', done => {
-      people.update(_ids.Doug, { name: 'Dougler' }, {}, (error, data) => {
-        expect(!error).to.be.ok;
+      people.update(_ids.Doug, { name: 'Dougler' }).then(data => {
         expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
         expect(data.name).to.equal('Dougler');
         expect(!data.age).to.be.ok;
         done();
-      });
+      }).catch(done);
     });
 
     it('returns NotFound error for non-existing id', done => {
-      people.update('abc', { name: 'NotFound' }, {}, (error, data) => {
+      people.update('abc', { name: 'NotFound' }).then(done, error => {
         expect(error).to.be.ok;
         expect(error instanceof errors.NotFound).to.be.ok;
         expect(error.message).to.equal('No record found for id \'abc\'');
-        expect(data).to.be.undefined;
         done();
       });
     });
@@ -388,21 +418,31 @@ export default function(people, _ids, errors, idProp = 'id') {
 
   describe('patch', () => {
     it('updates an existing instance', done => {
-      people.patch(_ids.Doug, { name: 'PatchDoug' }, {}, (error, data) => {
-        expect(!error).to.be.ok;
+      people.patch(_ids.Doug, { name: 'PatchDoug' }).then(data => {
         expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
         expect(data.name).to.equal('PatchDoug');
         expect(data.age).to.equal(32);
         done();
-      });
+      }).catch(done);
+    });
+
+    it('patches multiple instances', done => {
+      people.create({ name: 'Dave', age: 29, created: true }).then(() => {
+        return people.create({ name: 'David', age: 3, created: true });
+      }).then(() => {
+        return people.patch(null, { age: 2 }, { query: { created: true } });
+      }).then(data => {
+        expect(data[0].age).to.equal(2);
+        expect(data[1].age).to.equal(2);
+        done();
+      }).catch(done);
     });
 
     it('returns NotFound error for non-existing id', done => {
-      people.patch('abc', { name: 'PatchDoug' }, {}, (error, data) => {
+      people.patch('abc', { name: 'PatchDoug' }).then(done, error => {
         expect(error).to.be.ok;
         expect(error instanceof errors.NotFound).to.be.ok;
         expect(error.message).to.equal('No record found for id \'abc\'');
-        expect(data).to.be.undefined;
         done();
       });
     });
@@ -413,13 +453,12 @@ export default function(people, _ids, errors, idProp = 'id') {
       people.create({
         name: 'Bill',
         age: 40
-      }, {}, (error, data) => {
-        expect(!error).to.be.ok;
+      }).then(data => {
         expect(data).to.be.instanceof(Object);
         expect(data).to.not.be.empty;
         expect(data.name).to.equal('Bill');
         done();
-      });
+      }).catch(done);
     });
 
     it('creates multiple new instances', done => {
@@ -434,11 +473,12 @@ export default function(people, _ids, errors, idProp = 'id') {
         }
       ];
 
-      people.create(items, {}, (error, data) => {
-        expect(!error).to.be.ok;
+      people.create(items).then(data => {
         expect(data).to.not.be.empty;
+        expect(data[0].name).to.equal('Gerald');
+        expect(data[1].name).to.equal('Herald');
         done();
-      });
+      }).catch(done);
     });
   });
 }
