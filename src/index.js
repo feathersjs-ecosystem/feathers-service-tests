@@ -1,8 +1,10 @@
 /*jshint expr: true*/
 
 import { expect } from 'chai';
+import example from './example';
 
-export default function(people, _ids, errors, idProp = 'id') {
+export { example };
+export function base(people, _ids, errors, idProp = 'id') {
   describe('extend', () => {
     it('extends and uses extended method', done => {
       let now = new Date().toString();
@@ -375,7 +377,6 @@ export default function(people, _ids, errors, idProp = 'id') {
         people.find().then(paginator => {
           expect(paginator.total).to.equal(3);
           expect(paginator.limit).to.equal(1);
-          expect(paginator.count).to.equal(1);
           expect(paginator.skip).to.equal(0);
           expect(paginator.data[0].name).to.equal('Doug');
           done();
@@ -386,7 +387,6 @@ export default function(people, _ids, errors, idProp = 'id') {
         people.find({ query: { $skip: 1, $limit: 4 } }).then(paginator => {
           expect(paginator.total).to.equal(3);
           expect(paginator.limit).to.equal(2);
-          expect(paginator.count).to.equal(2);
           expect(paginator.skip).to.equal(1);
           expect(paginator.data[0].name).to.equal('Bob');
           expect(paginator.data[1].name).to.equal('Alice');
