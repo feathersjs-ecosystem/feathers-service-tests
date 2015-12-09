@@ -7,10 +7,10 @@ export { example };
 export function base(people, _ids, errors, idProp = 'id') {
   describe('extend', () => {
     it('extends and uses extended method', done => {
-      let now = new Date().toString();
+      let now = new Date().getTime();
       let extended = people.extend({
         create(data) {
-          data.createdAt = now;
+          data.time = now;
           return this._super.apply(this, arguments);
         }
       });
@@ -18,7 +18,7 @@ export function base(people, _ids, errors, idProp = 'id') {
       extended.create({ name: 'Dave' }).then(data => {
         return extended.remove(data[idProp]);
       }).then(data => {
-        expect(data.createdAt).to.equal(now);
+        expect(data.time).to.equal(now);
         done();
       }).catch(done);
     });
