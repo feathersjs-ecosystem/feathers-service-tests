@@ -32,9 +32,9 @@ export default function common(people, _ids, errors, idProp = 'id') {
     });
 
     it('returns NotFound error for non-existing id', done => {
-      people.get('abc').catch(error => {
+      people.get('568225fbfe21222432e836ff').catch(error => {
         expect(error instanceof errors.NotFound).to.be.ok;
-        expect(error.message).to.equal('No record found for id \'abc\'');
+        expect(error.message).to.equal('No record found for id \'568225fbfe21222432e836ff\'');
         done();
       });
     });
@@ -405,10 +405,10 @@ export default function common(people, _ids, errors, idProp = 'id') {
     });
 
     it('returns NotFound error for non-existing id', done => {
-      people.update('abc', { name: 'NotFound' }).then(done, error => {
+      people.update('568225fbfe21222432e836ff', { name: 'NotFound' }).then(done, error => {
         expect(error).to.be.ok;
         expect(error instanceof errors.NotFound).to.be.ok;
-        expect(error.message).to.equal('No record found for id \'abc\'');
+        expect(error.message).to.equal('No record found for id \'568225fbfe21222432e836ff\'');
         done();
       });
     });
@@ -437,10 +437,10 @@ export default function common(people, _ids, errors, idProp = 'id') {
     });
 
     it('returns NotFound error for non-existing id', done => {
-      people.patch('abc', { name: 'PatchDoug' }).then(done, error => {
+      people.patch('568225fbfe21222432e836ff', { name: 'PatchDoug' }).then(done, error => {
         expect(error).to.be.ok;
         expect(error instanceof errors.NotFound).to.be.ok;
-        expect(error.message).to.equal('No record found for id \'abc\'');
+        expect(error.message).to.equal('No record found for id \'568225fbfe21222432e836ff\'');
         done();
       });
     });
