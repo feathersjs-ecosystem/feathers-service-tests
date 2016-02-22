@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "chai": "^3.4.0",
-    "request-promise": "^1.0.2"
+    "request-promise": "^2.0.0"
   },
   "devDependencies": {
     "babel": "^5.8.29",
