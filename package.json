@@ -50,7 +50,7 @@
     "request-promise": "^2.0.0"
   },
   "devDependencies": {
-    "babel": "^5.8.29",
+    "babel": "^6.5.2",
     "jshint": "^2.8.0",
     "mocha": "^2.3.3"
   }
