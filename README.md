@@ -18,6 +18,7 @@ feathers-service-tests is a test harness for different database service adapters
 - [feathers-nedb](https://github.com/feathersjs/feathers-nedb)
 - [feathers-memory](https://github.com/feathersjs/feathers-memory)
 - [feathers-localstorage](https://github.com/feathersjs/feathers-localstorage)
+- [feathers-rethinkdb](https://github.com/feathersjs/feathers-rethinkdb)
 
 ## Changelog
 
