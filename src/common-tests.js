@@ -56,9 +56,9 @@ export default function common(people, _ids, errors, idProp = 'id') {
         return people.remove(null, { query: { created: true } });
       }).then(data => {
         expect(data.length).to.equal(2);
-        let names = data.filter(person => person.name);
-        expect(names.indexOf('Dave')).to.be.greater.than(-1);
-        expect(names.indexOf('David')).to.be.greater.than(-1);
+        let names = data.map(person => person.name);
+        expect(names.indexOf('Dave')).to.be.above(-1);
+        expect(names.indexOf('David')).to.be.above(-1);
         done();
       }).catch(done);
     });
