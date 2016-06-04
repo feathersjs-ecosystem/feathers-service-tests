@@ -480,4 +480,58 @@ export default function common(people, _ids, errors, idProp = 'id') {
       }).catch(done);
     });
   });
+
+  describe('Services don\'t call public methods internally', () => {
+    // If any of the public methods are called the test fails
+    let throwing = people.extend({
+      find() {
+        throw new Error('find method called');
+      },
+      get() {
+        throw new Error('get method called');
+      },
+      create() {
+        throw new Error('create method called');
+      },
+      update() {
+        throw new Error('update method called');
+      },
+      patch() {
+        throw new Error('patch method called');
+      },
+      remove() {
+        throw new Error('remove method called');
+      }
+    });
+
+    it('find', () => {
+      return people.find.call(throwing);
+    });
+
+    it('get', () => {
+      return people.get.call(throwing, _ids.Doug);
+    });
+
+    it('create', () => {
+      return people.create.call(throwing, {
+        name: 'Bob',
+        age: 25
+      }).then(bob => {
+        // .remove isn't tested here
+        return people.remove(bob[idProp].toString());
+      });
+    });
+
+    it('update', () => {
+      return people.update.call(throwing, _ids.Doug, { name: 'Dougler' });
+    });
+
+    it('patch', () => {
+      return people.patch.call(throwing, _ids.Doug, { name: 'PatchDoug' });
+    });
+
+    it('remove', () => {
+      return people.remove.call(throwing, _ids.Doug);
+    });
+  });
 }
