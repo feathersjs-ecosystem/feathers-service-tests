@@ -392,6 +392,16 @@ export default function common(people, _ids, errors, idProp = 'id') {
           done();
         }).catch(done);
       });
+
+      it('allows to override paginate in params', done => {
+        people.find({ paginate: { default: 2 } }).then(paginator => {
+          expect(paginator.limit).to.equal(2);
+          expect(paginator.skip).to.equal(0);
+          return people.find({ paginate: false }).then(results =>
+            expect(results.length).to.equal(3)
+          );
+        }).then(() => done()).catch(done);
+      });
     });
   });
 
