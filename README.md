@@ -20,14 +20,8 @@ feathers-service-tests is a test harness for different database service adapters
 - [feathers-localstorage](https://github.com/feathersjs/feathers-localstorage)
 - [feathers-rethinkdb](https://github.com/feathersjs/feathers-rethinkdb)
 
-## Changelog
-
-__0.3.0__
-
-- Initial commonly used release
-
 ## License
 
-Copyright (c) 2015
+Copyright (c) 2016
 
 Licensed under the [MIT license](LICENSE).
