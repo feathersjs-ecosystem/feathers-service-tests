@@ -426,8 +426,12 @@ export default function common(people, _ids, errors, idProp = 'id') {
   });
 
   describe('patch', () => {
-    it('updates an existing instance', done => {
-      people.patch(_ids.Doug, { name: 'PatchDoug' }).then(data => {
+    it('updates an existing instance, does not delete data', done => {
+      const originalData = { [idProp]: _ids.Doug, name: 'PatchDoug' };
+      const originalCopy = Object.assign({}, originalData);
+
+      people.patch(_ids.Doug, originalData).then(data => {
+        expect(originalData).to.deep.equal(originalCopy);
         expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
         expect(data.name).to.equal('PatchDoug');
         expect(data.age).to.equal(32);
@@ -436,11 +440,11 @@ export default function common(people, _ids, errors, idProp = 'id') {
     });
 
     it('patches multiple instances', done => {
-      people.create({ name: 'Dave', age: 29, created: true }).then(() => {
-        return people.create({ name: 'David', age: 3, created: true });
-      }).then(() => {
-        return people.patch(null, { age: 2 }, { query: { created: true } });
-      }).then(data => {
+      people.create({ name: 'Dave', age: 29, created: true }).then(() =>
+        people.create({ name: 'David', age: 3, created: true })
+      ).then(() =>
+        people.patch(null, { age: 2 }, { query: { created: true } })
+      ).then(data => {
         expect(data[0].age).to.equal(2);
         expect(data[1].age).to.equal(2);
         done();
