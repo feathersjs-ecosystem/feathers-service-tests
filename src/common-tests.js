@@ -406,8 +406,12 @@ export default function common(people, _ids, errors, idProp = 'id') {
   });
 
   describe('update', () => {
-    it('replaces an existing instance', done => {
-      people.update(_ids.Doug, { name: 'Dougler' }).then(data => {
+    it('replaces an existing instance, does not modify original data', done => {
+      const originalData = { [idProp]: _ids.Doug, name: 'Dougler' };
+      const originalCopy = Object.assign({}, originalData);
+
+      people.update(_ids.Doug, originalData).then(data => {
+        expect(originalData).to.deep.equal(originalCopy);
         expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
         expect(data.name).to.equal('Dougler');
         expect(!data.age).to.be.ok;
@@ -426,7 +430,7 @@ export default function common(people, _ids, errors, idProp = 'id') {
   });
 
   describe('patch', () => {
-    it('updates an existing instance, does not delete data', done => {
+    it('updates an existing instance, does not modify original data', done => {
       const originalData = { [idProp]: _ids.Doug, name: 'PatchDoug' };
       const originalCopy = Object.assign({}, originalData);
 
@@ -463,10 +467,14 @@ export default function common(people, _ids, errors, idProp = 'id') {
 
   describe('create', () => {
     it('creates a single new instance and returns the created instance', done => {
-      people.create({
+      const originalData = {
         name: 'Bill',
         age: 40
-      }).then(data => {
+      };
+      const originalCopy = Object.assign({}, originalData);
+
+      people.create(originalData).then(data => {
+        expect(originalData).to.deep.equal(originalCopy);
         expect(data).to.be.instanceof(Object);
         expect(data).to.not.be.empty;
         expect(data.name).to.equal('Bill');
