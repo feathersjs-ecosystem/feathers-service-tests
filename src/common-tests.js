@@ -4,7 +4,7 @@ import { expect } from 'chai';
 
 export default function common(people, _ids, errors, idProp = 'id') {
   describe('extend', () => {
-    it('extends and uses extended method', done => {
+    it('extends and uses extended method', () => {
       let now = new Date().getTime();
       let extended = people.extend({
         create(data) {
@@ -13,60 +13,53 @@ export default function common(people, _ids, errors, idProp = 'id') {
         }
       });
 
-      extended.create({ name: 'Dave' }).then(data => {
-        return extended.remove(data[idProp]);
-      }).then(data => {
-        expect(data.time).to.equal(now);
-        done();
-      }).catch(done);
+      return extended.create({ name: 'Dave' })
+        .then(data => extended.remove(data[idProp]))
+        .then(data => expect(data.time).to.equal(now));
     });
   });
 
   describe('get', () => {
-    it('returns an instance that exists', done => {
-      people.get(_ids.Doug).then(data => {
+    it('returns an instance that exists', () => {
+      return people.get(_ids.Doug).then(data => {
         expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
         expect(data.name).to.equal('Doug');
-        done();
-      }).catch(done);
+      });
     });
 
-    it('returns NotFound error for non-existing id', done => {
-      people.get('568225fbfe21222432e836ff').catch(error => {
+    it('returns NotFound error for non-existing id', () => {
+      return people.get('568225fbfe21222432e836ff').catch(error => {
         expect(error instanceof errors.NotFound).to.be.ok;
         expect(error.message).to.equal('No record found for id \'568225fbfe21222432e836ff\'');
-        done();
       });
     });
   });
 
   describe('remove', () => {
-    it('deletes an existing instance and returns the deleted instance', done => {
+    it('deletes an existing instance and returns the deleted instance', () => {
       people.remove(_ids.Doug).then(data => {
         expect(data).to.be.ok;
         expect(data.name).to.equal('Doug');
-        done();
-      }).catch(done);
+      });
     });
 
-    it('deletes multiple instances', done => {
-      people.create({ name: 'Dave', age: 29, created: true }).then(() => {
-        return people.create({ name: 'David', age: 3, created: true });
-      }).then(() => {
-        return people.remove(null, { query: { created: true } });
-      }).then(data => {
-        expect(data.length).to.equal(2);
-        let names = data.map(person => person.name);
-        expect(names.indexOf('Dave')).to.be.above(-1);
-        expect(names.indexOf('David')).to.be.above(-1);
-        done();
-      }).catch(done);
+    it('deletes multiple instances', () => {
+      return people.create({ name: 'Dave', age: 29, created: true })
+        .then(() => people.create({ name: 'David', age: 3, created: true }))
+        .then(() => people.remove(null, { query: { created: true } }))
+        .then(data => {
+          expect(data.length).to.equal(2);
+
+          let names = data.map(person => person.name);
+          expect(names.indexOf('Dave')).to.be.above(-1);
+          expect(names.indexOf('David')).to.be.above(-1);
+        });
     });
   });
 
   describe('find', () => {
-    beforeEach(done => {
-      people.create({
+    beforeEach(() => {
+      return people.create({
         name: 'Bob',
         age: 25
       }).then(bob => {
@@ -76,112 +69,100 @@ export default function common(people, _ids, errors, idProp = 'id') {
           name: 'Alice',
           age: 19
         });
-      }).then(alice => {
-        _ids.Alice = alice[idProp].toString();
-        done();
-      }).catch(done);
+      }).then(alice => _ids.Alice = alice[idProp].toString());
     });
 
-    afterEach(done => {
-      people.remove(_ids.Bob).then(() => {
-        return people.remove(_ids.Alice);
-      }).then(() => done()).catch(done);
+    afterEach(() => {
+      return people.remove(_ids.Bob)
+        .then(() => people.remove(_ids.Alice));
     });
 
-    it('returns all items', done => {
-      people.find().then(data => {
+    it('returns all items', () => {
+      return people.find().then(data => {
         expect(data).to.be.instanceof(Array);
         expect(data.length).to.equal(3);
-        done();
-      }).catch(done);
+      });
     });
 
-    it('filters results by a single parameter', done => {
-      var params = { query: { name: 'Alice' } };
+    it('filters results by a single parameter', () => {
+      const params = { query: { name: 'Alice' } };
 
-      people.find(params).then(data => {
+      return people.find(params).then(data => {
         expect(data).to.be.instanceof(Array);
         expect(data.length).to.equal(1);
         expect(data[0].name).to.equal('Alice');
-        done();
-      }).catch(done);
+      });
     });
 
-    it('filters results by multiple parameters', done => {
-      var params = { query: { name: 'Alice', age: 19 } };
+    it('filters results by multiple parameters', () => {
+      const params = { query: { name: 'Alice', age: 19 } };
 
-      people.find(params).then(data => {
+      return people.find(params).then(data => {
         expect(data).to.be.instanceof(Array);
         expect(data.length).to.equal(1);
         expect(data[0].name).to.equal('Alice');
-        done();
-      }).catch(done);
+      });
     });
 
     describe('special filters', ()  => {
-      it('can $sort', done => {
-        var params = {
+      it('can $sort', () => {
+        const params = {
           query: {
             $sort: {name: 1}
           }
         };
 
-        people.find(params).then(data => {
+        return people.find(params).then(data => {
           expect(data.length).to.equal(3);
           expect(data[0].name).to.equal('Alice');
           expect(data[1].name).to.equal('Bob');
           expect(data[2].name).to.equal('Doug');
-          done();
-        }).catch(done);
+        });
       });
 
-      it('can $limit', done => {
-        var params = {
+      it('can $limit', () => {
+        const params = {
           query: {
             $limit: 2
           }
         };
 
-        people.find(params).then(data => {
-          expect(data.length).to.equal(2);
-          done();
-        }).catch(done);
+        people.find(params)
+          .then(data => expect(data.length).to.equal(2));
       });
 
-      it('can $skip', done => {
-        var params = {
+      it('can $skip', () => {
+        const params = {
           query: {
             $sort: {name: 1},
             $skip: 1
           }
         };
 
-        people.find(params).then(data => {
+        return people.find(params).then(data => {
           expect(data.length).to.equal(2);
           expect(data[0].name).to.equal('Bob');
           expect(data[1].name).to.equal('Doug');
-          done();
-        }).catch(done);
+        });
       });
 
-      it('can $select', done => {
-        var params = {
+      it('can $select', () => {
+        const params = {
           query: {
             name: 'Alice',
             $select: ['name']
           }
         };
 
-        people.find(params).then(data => {
+        return people.find(params).then(data => {
           expect(data.length).to.equal(1);
           expect(data[0].name).to.equal('Alice');
           expect(data[0].age).to.be.undefined;
-          done();
-        }).catch(done);
+        });
       });
 
-      it('can $or', done => {
-        var params = {
+      it('can $or', () => {
+        const params = {
           query: {
             $or: [
               { name: 'Alice' },
@@ -191,16 +172,15 @@ export default function common(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params).then(data => {
+        return people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           expect(data[0].name).to.equal('Alice');
           expect(data[1].name).to.equal('Bob');
-          done();
-        }).catch(done);
+        });
       });
 
-      it.skip('can $not', done => {
+      it.skip('can $not', () => {
         var params = {
           query: {
             age: { $not: 19 },
@@ -208,16 +188,15 @@ export default function common(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params).then(data => {
+        return people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(1);
           expect(data[0].name).to.equal('Bob');
-          done();
-        }, done);
+        });
       });
 
-      it('can $in', done => {
-        var params = {
+      it('can $in', () => {
+        const params = {
           query: {
             name: {
               $in: ['Alice', 'Bob']
@@ -226,17 +205,16 @@ export default function common(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params).then(data => {
+        return people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
           expect(data[0].name).to.equal('Alice');
           expect(data[1].name).to.equal('Bob');
-          done();
-        }).catch(done);
+        });
       });
 
-      it('can $nin', done => {
-        var params = {
+      it('can $nin', () => {
+        const params = {
           query: {
             name: {
               $nin: ['Alice', 'Bob']
@@ -244,16 +222,15 @@ export default function common(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params).then(data => {
+        return people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(1);
           expect(data[0].name).to.equal('Doug');
-          done();
-        }).catch(done);
+        });
       });
 
-      it('can $lt', done => {
-        var params = {
+      it('can $lt', () => {
+        const params = {
           query: {
             age: {
               $lt: 30
@@ -261,15 +238,14 @@ export default function common(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params).then(data => {
+        return people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
-          done();
-        }).catch(done);
+        });
       });
 
-      it('can $lte', done => {
-        var params = {
+      it('can $lte', () => {
+        const params = {
           query: {
             age: {
               $lte: 25
@@ -277,15 +253,14 @@ export default function common(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params).then(data => {
+        return people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
-          done();
-        }).catch(done);
+        });
       });
 
-      it('can $gt', done => {
-        var params = {
+      it('can $gt', () => {
+        const params = {
           query: {
             age: {
               $gt: 30
@@ -293,15 +268,14 @@ export default function common(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params).then(data => {
+        return people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(1);
-          done();
-        }).catch(done);
+        });
       });
 
-      it('can $gte', done => {
-        var params = {
+      it('can $gte', () => {
+        const params = {
           query: {
             age: {
               $gte: 25
@@ -309,15 +283,14 @@ export default function common(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params).then(data => {
+        return people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
-          done();
-        }).catch(done);
+        });
       });
 
-      it('can $ne', done => {
-        var params = {
+      it('can $ne', () => {
+        const params = {
           query: {
             age: {
               $ne: 25
@@ -325,21 +298,15 @@ export default function common(people, _ids, errors, idProp = 'id') {
           }
         };
 
-        people.find(params).then(data => {
+        return people.find(params).then(data => {
           expect(data).to.be.instanceof(Array);
           expect(data.length).to.equal(2);
-          done();
-        }).catch(done);
-      });
-
-      it.skip('can $populate', done => {
-        // expect(service).to.throw('No table name specified.');
-        done();
+        });
       });
     });
 
-    it.skip('can handle complex nested special queries', done => {
-      var params = {
+    it.skip('can handle complex nested special queries', () => {
+      const params = {
         query: {
           $or: [
             {
@@ -355,135 +322,125 @@ export default function common(people, _ids, errors, idProp = 'id') {
         }
       };
 
-      people.find(params, (error, data) => {
+      return people.find(params, (error, data) => {
         expect(!error).to.be.ok;
         expect(data).to.be.instanceof(Array);
         expect(data.length).to.equal(2);
-        done();
       });
     });
 
     describe('paginate', function() {
-      before(() => {
-        people.paginate = { default: 1, max: 2 };
-      });
+      before(() => people.paginate = { default: 1, max: 2 });
 
-      after(() => {
-        people.paginate = {};
-      });
+      after(() => people.paginate = {});
 
-      it('returns paginated object, paginates by default and shows total', done => {
-        people.find().then(paginator => {
+      it('returns paginated object, paginates by default and shows total', () => {
+        return people.find().then(paginator => {
           expect(paginator.total).to.equal(3);
           expect(paginator.limit).to.equal(1);
           expect(paginator.skip).to.equal(0);
           expect(paginator.data[0].name).to.equal('Doug');
-          done();
-        }).catch(done);
+        });
       });
 
-      it('paginates max and skips', done => {
-        people.find({ query: { $skip: 1, $limit: 4 } }).then(paginator => {
+      it('paginates max and skips', () => {
+        return people.find({ query: { $skip: 1, $limit: 4 } }).then(paginator => {
           expect(paginator.total).to.equal(3);
           expect(paginator.limit).to.equal(2);
           expect(paginator.skip).to.equal(1);
           expect(paginator.data[0].name).to.equal('Bob');
           expect(paginator.data[1].name).to.equal('Alice');
-          done();
-        }).catch(done);
+        });
       });
 
-      it('allows to override paginate in params', done => {
-        people.find({ paginate: { default: 2 } }).then(paginator => {
+      it('allows to override paginate in params', () => {
+        return people.find({ paginate: { default: 2 } }).then(paginator => {
           expect(paginator.limit).to.equal(2);
           expect(paginator.skip).to.equal(0);
           return people.find({ paginate: false }).then(results =>
             expect(results.length).to.equal(3)
           );
-        }).then(() => done()).catch(done);
+        });
       });
     });
   });
 
   describe('update', () => {
-    it('replaces an existing instance, does not modify original data', done => {
+    it('replaces an existing instance, does not modify original data', () => {
       const originalData = { [idProp]: _ids.Doug, name: 'Dougler' };
       const originalCopy = Object.assign({}, originalData);
 
-      people.update(_ids.Doug, originalData).then(data => {
+      return people.update(_ids.Doug, originalData).then(data => {
         expect(originalData).to.deep.equal(originalCopy);
         expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
         expect(data.name).to.equal('Dougler');
         expect(!data.age).to.be.ok;
-        done();
-      }).catch(done);
+      });
     });
 
-    it('returns NotFound error for non-existing id', done => {
-      people.update('568225fbfe21222432e836ff', { name: 'NotFound' }).then(done, error => {
-        expect(error).to.be.ok;
-        expect(error instanceof errors.NotFound).to.be.ok;
-        expect(error.message).to.equal('No record found for id \'568225fbfe21222432e836ff\'');
-        done();
-      });
+    it('returns NotFound error for non-existing id', () => {
+      return people.update('568225fbfe21222432e836ff', { name: 'NotFound' })
+        .catch(error => {
+          expect(error).to.be.ok;
+          expect(error instanceof errors.NotFound).to.be.ok;
+          expect(error.message).to.equal('No record found for id \'568225fbfe21222432e836ff\'');
+        });
     });
   });
 
   describe('patch', () => {
-    it('updates an existing instance, does not modify original data', done => {
+    it('updates an existing instance, does not modify original data', () => {
       const originalData = { [idProp]: _ids.Doug, name: 'PatchDoug' };
       const originalCopy = Object.assign({}, originalData);
 
-      people.patch(_ids.Doug, originalData).then(data => {
+      return people.patch(_ids.Doug, originalData).then(data => {
         expect(originalData).to.deep.equal(originalCopy);
         expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
         expect(data.name).to.equal('PatchDoug');
         expect(data.age).to.equal(32);
-        done();
-      }).catch(done);
+      });
     });
 
-    it('patches multiple instances', done => {
-      people.create({ name: 'Dave', age: 29, created: true }).then(() =>
+    it('patches multiple instances', () => {
+      return people.create({ name: 'Dave', age: 29, created: true }).then(() =>
         people.create({ name: 'David', age: 3, created: true })
       ).then(() =>
         people.patch(null, { age: 2 }, { query: { created: true } })
       ).then(data => {
         expect(data[0].age).to.equal(2);
         expect(data[1].age).to.equal(2);
-        done();
-      }).catch(done);
+      });
     });
 
-    it('returns NotFound error for non-existing id', done => {
-      people.patch('568225fbfe21222432e836ff', { name: 'PatchDoug' }).then(done, error => {
-        expect(error).to.be.ok;
-        expect(error instanceof errors.NotFound).to.be.ok;
-        expect(error.message).to.equal('No record found for id \'568225fbfe21222432e836ff\'');
-        done();
-      });
+    it('returns NotFound error for non-existing id', () => {
+      return people.patch('568225fbfe21222432e836ff', { name: 'PatchDoug' })
+        .then(() => { throw new Error('Should never get here'); })
+        .catch(error => {
+          expect(error).to.be.ok;
+          expect(error instanceof errors.NotFound).to.be.ok;
+          expect(error.message).to.equal('No record found for id \'568225fbfe21222432e836ff\'');
+        });
     });
   });
 
   describe('create', () => {
-    it('creates a single new instance and returns the created instance', done => {
+    it('creates a single new instance and returns the created instance', () => {
       const originalData = {
         name: 'Bill',
         age: 40
       };
       const originalCopy = Object.assign({}, originalData);
 
-      people.create(originalData).then(data => {
+      return people.create(originalData).then(data => {
         expect(originalData).to.deep.equal(originalCopy);
         expect(data).to.be.instanceof(Object);
         expect(data).to.not.be.empty;
         expect(data.name).to.equal('Bill');
-        done();
-      }).catch(done);
+      });
     });
 
-    it('creates multiple new instances', done => {
-      let items = [
+    it('creates multiple new instances', () => {
+      const items = [
         {
           name: 'Gerald',
           age: 18
@@ -494,12 +451,11 @@ export default function common(people, _ids, errors, idProp = 'id') {
         }
       ];
 
-      people.create(items).then(data => {
+      return people.create(items).then(data => {
         expect(data).to.not.be.empty;
         expect(data[0].name).to.equal('Gerald');
         expect(data[1].name).to.equal('Herald');
-        done();
-      }).catch(done);
+      });
     });
   });
 
@@ -526,34 +482,26 @@ export default function common(people, _ids, errors, idProp = 'id') {
       }
     });
 
-    it('find', () => {
-      return people.find.call(throwing);
-    });
+    it('find', () => people.find.call(throwing));
 
-    it('get', () => {
-      return people.get.call(throwing, _ids.Doug);
-    });
+    it('get', () => people.get.call(throwing, _ids.Doug));
 
-    it('create', () => {
-      return people.create.call(throwing, {
+    it('create', () => people.create.call(throwing, {
         name: 'Bob',
         age: 25
-      }).then(bob => {
-        // .remove isn't tested here
-        return people.remove(bob[idProp].toString());
-      });
-    });
+      })
+      // .remove isn't tested here
+      .then(bob => people.remove(bob[idProp].toString()))
+    );
 
-    it('update', () => {
-      return people.update.call(throwing, _ids.Doug, { name: 'Dougler' });
-    });
+    it('update', () =>
+      people.update.call(throwing, _ids.Doug, { name: 'Dougler' })
+    );
 
-    it('patch', () => {
-      return people.patch.call(throwing, _ids.Doug, { name: 'PatchDoug' });
-    });
+    it('patch', () =>
+      people.patch.call(throwing, _ids.Doug, { name: 'PatchDoug' })
+    );
 
-    it('remove', () => {
-      return people.remove.call(throwing, _ids.Doug);
-    });
+    it('remove', () => people.remove.call(throwing, _ids.Doug));
   });
 }
