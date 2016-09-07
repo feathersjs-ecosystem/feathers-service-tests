@@ -21,6 +21,10 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
       expect(app.service(serviceName).id).to.equal(idProp)
     );
 
+    it('sets `events` property from options', () =>
+      expect(app.service(serviceName).events).to.deep.equal([ 'testing' ])
+    );
+
     describe('extend', () => {
       it('extends and uses extended method', () => {
         let now = new Date().getTime();
@@ -63,8 +67,14 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
 
       it('deletes multiple instances', () => {
         return app.service(serviceName).create({ name: 'Dave', age: 29, created: true })
-          .then(() => app.service(serviceName).create({ name: 'David', age: 3, created: true }))
-          .then(() => app.service(serviceName).remove(null, { query: { created: true } }))
+          .then(() => app.service(serviceName).create({
+            name: 'David',
+            age: 3,
+            created: true
+          }))
+          .then(() => app.service(serviceName).remove(null, {
+            query: { created: true }
+          }))
           .then(data => {
             expect(data.length).to.equal(2);
 
@@ -393,13 +403,16 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
         });
 
         it('allows to override paginate in params', () => {
-          return app.service(serviceName).find({ paginate: { default: 2 } }).then(paginator => {
-            expect(paginator.limit).to.equal(2);
-            expect(paginator.skip).to.equal(0);
-            return app.service(serviceName).find({ paginate: false }).then(results =>
-              expect(results.length).to.equal(3)
-            );
-          });
+          return app.service(serviceName)
+            .find({ paginate: { default: 2 } })
+            .then(paginator => {
+              expect(paginator.limit).to.equal(2);
+              expect(paginator.skip).to.equal(0);
+
+              return app.service(serviceName)
+                .find({ paginate: false })
+                .then(results => expect(results.length).to.equal(3));
+            });
         });
       });
     });
@@ -418,7 +431,8 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
       });
 
       it('returns NotFound error for non-existing id', () => {
-        return app.service(serviceName).update('568225fbfe21222432e836ff', { name: 'NotFound' })
+        return app.service(serviceName)
+          .update('568225fbfe21222432e836ff', { name: 'NotFound' })
           .catch(error => {
             expect(error).to.be.ok;
             expect(error instanceof errors.NotFound).to.be.ok;
@@ -432,20 +446,33 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
         const originalData = { [idProp]: _ids.Doug, name: 'PatchDoug' };
         const originalCopy = Object.assign({}, originalData);
 
-        return app.service(serviceName).patch(_ids.Doug, originalData).then(data => {
-          expect(originalData).to.deep.equal(originalCopy);
-          expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
-          expect(data.name).to.equal('PatchDoug');
-          expect(data.age).to.equal(32);
-        });
+        return app.service(serviceName).patch(_ids.Doug, originalData)
+          .then(data => {
+            expect(originalData).to.deep.equal(originalCopy);
+            expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
+            expect(data.name).to.equal('PatchDoug');
+            expect(data.age).to.equal(32);
+          });
       });
 
       it('patches multiple instances', () => {
-        return app.service(serviceName).create({ name: 'Dave', age: 29, created: true }).then(() =>
-          app.service(serviceName).create({ name: 'David', age: 3, created: true })
+        return app.service(serviceName).create({
+          name: 'Dave',
+          age: 29,
+          created: true
+        }).then(() =>
+          app.service(serviceName).create({
+            name: 'David',
+            age: 3,
+            created: true
+          })
         ).then(() =>
-          app.service(serviceName).patch(null, { age: 2 }, { query: { created: true } })
-        ).then(data => {
+          app.service(serviceName).patch(null, {
+            age: 2
+          }, {
+            query: { created: true }
+          }
+        )).then(data => {
           expect(data[0].age).to.equal(2);
           expect(data[1].age).to.equal(2);
         });
@@ -500,38 +527,42 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
     });
 
     describe('Services don\'t call public methods internally', () => {
-      // If any of the public methods are called the test fails
-      const people = app.service(serviceName);
-      let throwing = app.service(serviceName).extend({
-        get store() {
-          return app.service(serviceName).store;
-        },
+      let throwing;
 
-        find() {
-          throw new Error('find method called');
-        },
-        get() {
-          throw new Error('get method called');
-        },
-        create() {
-          throw new Error('create method called');
-        },
-        update() {
-          throw new Error('update method called');
-        },
-        patch() {
-          throw new Error('patch method called');
-        },
-        remove() {
-          throw new Error('remove method called');
-        }
+      before(() => {
+        throwing = app.service(serviceName).extend({
+          get store() {
+            return app.service(serviceName).store;
+          },
+
+          find() {
+            throw new Error('find method called');
+          },
+          get() {
+            throw new Error('get method called');
+          },
+          create() {
+            throw new Error('create method called');
+          },
+          update() {
+            throw new Error('update method called');
+          },
+          patch() {
+            throw new Error('patch method called');
+          },
+          remove() {
+            throw new Error('remove method called');
+          }
+        });
       });
 
-      it('find', () => people.find.call(throwing));
+      it('find', () => app.service(serviceName).find.call(throwing));
 
-      it('get', () => people.get.call(throwing, _ids.Doug));
+      it('get', () =>
+        app.service(serviceName).get.call(throwing, _ids.Doug)
+      );
 
-      it('create', () => people.create.call(throwing, {
+      it('create', () => app.service(serviceName).create.call(throwing, {
           [idProp]: 33,
           name: 'Bob',
           age: 25
@@ -539,14 +570,20 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
       );
 
       it('update', () =>
-        people.update.call(throwing, _ids.Doug, { name: 'Dougler' })
+        app.service(serviceName).update.call(throwing, _ids.Doug, {
+          name: 'Dougler'
+        })
       );
 
       it('patch', () =>
-        people.patch.call(throwing, _ids.Doug, { name: 'PatchDoug' })
+        app.service(serviceName).patch.call(throwing, _ids.Doug, {
+          name: 'PatchDoug'
+        })
       );
 
-      it('remove', () => people.remove.call(throwing, _ids.Doug));
+      it('remove', () =>
+        app.service(serviceName).remove.call(throwing, _ids.Doug)
+      );
     });
   });
 }
