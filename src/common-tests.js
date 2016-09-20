@@ -3,7 +3,7 @@
 import { expect } from 'chai';
 
 function common(app, errors, serviceName = 'people', idProp = 'id') {
-  describe('Common tests', () => {
+  describe(`Common tests, ${serviceName} service with ${idProp} id property`, () => {
     const _ids = {};
 
     beforeEach(() =>
@@ -520,7 +520,10 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
 
         return app.service(serviceName).create(items).then(data => {
           expect(data).to.not.be.empty;
+          expect(Array.isArray(data)).to.equal(true);
+          expect(typeof data[0][idProp]).to.not.equal('undefined');
           expect(data[0].name).to.equal('Gerald');
+          expect(typeof data[1][idProp]).to.not.equal('undefined');
           expect(data[1].name).to.equal('Herald');
         });
       });
