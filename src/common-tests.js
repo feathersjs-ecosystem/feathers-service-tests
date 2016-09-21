@@ -456,26 +456,83 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
       });
 
       it('patches multiple instances', () => {
-        return app.service(serviceName).create({
+        const service = app.service(serviceName);
+        const params = {
+          query: { created: true }
+        };
+
+        return service.create({
           name: 'Dave',
           age: 29,
           created: true
         }).then(() =>
-          app.service(serviceName).create({
+          service.create({
             name: 'David',
             age: 3,
             created: true
           })
         ).then(() =>
-          app.service(serviceName).patch(null, {
+          service.patch(null, {
             age: 2
-          }, {
-            query: { created: true }
-          }
+          }, params
         )).then(data => {
+          expect(data.length).to.equal(2);
           expect(data[0].age).to.equal(2);
           expect(data[1].age).to.equal(2);
-        });
+        }).then(() => service.remove(null, params));
+      });
+
+      it('patches multiple instances and returns the actually changed items', () => {
+        const service = app.service(serviceName);
+        const params = {
+          query: { age: { $lt: 10 } }
+        };
+
+        return service.create({
+          name: 'Dave',
+          age: 8,
+          created: true
+        }).then(() =>
+          service.create({
+            name: 'David',
+            age: 4,
+            created: true
+          })
+        ).then(() =>
+          service.patch(null, {
+            age: 2
+          }, params
+        )).then(data => {
+          expect(data.length).to.equal(2);
+          expect(data[0].age).to.equal(2);
+          expect(data[1].age).to.equal(2);
+        }).then(() => service.remove(null, params));
+      });
+
+      it('patches multiple even if query changed', () => {
+        const service = app.service(serviceName);
+
+        return service.create({
+          name: 'Dave',
+          age: 2,
+          created: true
+        }).then(() =>
+          service.create({
+            name: 'David',
+            age: 2,
+            created: true
+          })
+        ).then(() =>
+          service.patch(null, {
+            age: 8
+          }, { query: { age: 2 } }
+        )).then(data => {
+          expect(data.length).to.equal(2);
+          expect(data[0].age).to.equal(8);
+          expect(data[1].age).to.equal(8);
+        }).then(() => service.remove(null, {
+          query: { age: 8 }
+        }));
       });
 
       it('returns NotFound error for non-existing id', () => {
