@@ -150,6 +150,21 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
           });
         });
 
+        it('can $sort with strings', () => {
+          const params = {
+            query: {
+              $sort: { name: '1' }
+            }
+          };
+
+          return app.service(serviceName).find(params).then(data => {
+            expect(data.length).to.equal(3);
+            expect(data[0].name).to.equal('Alice');
+            expect(data[1].name).to.equal('Bob');
+            expect(data[2].name).to.equal('Doug');
+          });
+        });
+
         it('can $limit', () => {
           const params = {
             query: {
