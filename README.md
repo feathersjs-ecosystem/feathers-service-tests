@@ -11,10 +11,14 @@ feathers-service-tests is a test harness for different database service adapters
 - [feathers-mongodb](https://github.com/feathersjs/feathers-mongodb)
 - [feathers-mongoose](https://github.com/feathersjs/feathers-mongoose)
 - [feathers-knex](https://github.com/feathersjs/feathers-knex)
-- [feathers-sqlite](https://github.com/feathersjs/feathers-sqlite)
-- [feathers-mysql](https://github.com/feathersjs/feathers-mysql)
-- [feathers-postgresql](https://github.com/feathersjs/feathers-postgresql)
-- [feathers-mariadb](https://github.com/feathersjs/feathers-mariadb)
+- [feathers-sequelize](https://github.com/feathersjs/feathers-sequelize)
+   - mysql
+   - postgres
+   - mariadb
+   - sql server
+   - sqlite
+- [feathers-levelup](https://github.com/feathersjs/feathers-levelup)
+- [feathers-waterline](https://github.com/feathersjs/feathers-waterline)
 - [feathers-nedb](https://github.com/feathersjs/feathers-nedb)
 - [feathers-memory](https://github.com/feathersjs/feathers-memory)
 - [feathers-localstorage](https://github.com/feathersjs/feathers-localstorage)
