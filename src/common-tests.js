@@ -1,8 +1,6 @@
-/*jshint expr: true*/
-
 import { expect } from 'chai';
 
-function common(app, errors, serviceName = 'people', idProp = 'id') {
+function common (app, errors, serviceName = 'people', idProp = 'id') {
   describe(`Common tests, ${serviceName} service with ${idProp} id property`, () => {
     const _ids = {};
 
@@ -10,7 +8,7 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
       app.service(serviceName).create({
         name: 'Doug',
         age: 32
-      }).then(data => _ids.Doug = data[idProp])
+      }).then(data => (_ids.Doug = data[idProp]))
     );
 
     afterEach(() =>
@@ -29,7 +27,7 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
       it('extends and uses extended method', () => {
         let now = new Date().getTime();
         let extended = app.service(serviceName).extend({
-          create(data) {
+          create (data) {
             data.time = now;
             return this._super.apply(this, arguments);
           }
@@ -97,7 +95,7 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
             name: 'Alice',
             age: 19
           });
-        }).then(alice => _ids.Alice = alice[idProp].toString());
+        }).then(alice => (_ids.Alice = alice[idProp].toString()));
       });
 
       afterEach(() =>
@@ -134,7 +132,7 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
         });
       });
 
-      describe('special filters', ()  => {
+      describe('special filters', () => {
         it('can $sort', () => {
           const params = {
             query: {
@@ -391,12 +389,12 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
         });
       });
 
-      describe('paginate', function() {
+      describe('paginate', function () {
         beforeEach(() =>
-          app.service(serviceName).paginate = { default: 1, max: 2 }
+          (app.service(serviceName).paginate = { default: 1, max: 2 })
         );
 
-        afterEach(() => app.service(serviceName).paginate = {});
+        afterEach(() => (app.service(serviceName).paginate = {}));
 
         it('returns paginated object, paginates by default and shows total', () => {
           return app.service(serviceName).find().then(paginator => {
@@ -606,26 +604,26 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
 
       before(() => {
         throwing = app.service(serviceName).extend({
-          get store() {
+          get store () {
             return app.service(serviceName).store;
           },
 
-          find() {
+          find () {
             throw new Error('find method called');
           },
-          get() {
+          get () {
             throw new Error('get method called');
           },
-          create() {
+          create () {
             throw new Error('create method called');
           },
-          update() {
+          update () {
             throw new Error('update method called');
           },
-          patch() {
+          patch () {
             throw new Error('patch method called');
           },
-          remove() {
+          remove () {
             throw new Error('remove method called');
           }
         });
@@ -638,10 +636,10 @@ function common(app, errors, serviceName = 'people', idProp = 'id') {
       );
 
       it('create', () => app.service(serviceName).create.call(throwing, {
-          [idProp]: 33,
-          name: 'Bob',
-          age: 25
-        })
+        [idProp]: 33,
+        name: 'Bob',
+        age: 25
+      })
       );
 
       it('update', () =>

@@ -1,9 +1,7 @@
-/*jshint expr: true*/
-
 import { expect } from 'chai';
 import request from 'request-promise';
 
-export default function(idProp = 'id', url = 'http://localhost:3030/todos') {
+export default function (idProp = 'id', url = 'http://localhost:3030/todos') {
   let firstId;
 
   it('POST', () => {
@@ -94,7 +92,7 @@ export default function(idProp = 'id', url = 'http://localhost:3030/todos') {
     return request.post({
       url,
       json: true,
-      body: { text: 'to delete', complete : false }
+      body: { text: 'to delete', complete: false }
     }).then(todo =>
       request.del({ url: `${url}/${todo[idProp]}`, json: true })
         .then(todo => expect(todo.text).to.equal('to delete'))
