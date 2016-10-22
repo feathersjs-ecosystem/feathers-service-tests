@@ -2,4 +2,4 @@
 src/
 test/
 !lib/
-.github
+.github/
