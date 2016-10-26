@@ -1,6 +1,14 @@
 language: node_js
 node_js:
-  - '0.10'
-  - '0.12'
-  - 'node'
-  - 'iojs'
+- node
+- '6'
+- '4'
+- iojs
+- '0.12'
+- '0.10'
+sudo: false
+notifications:
+  email: false
+  slack:
+    rooms:
+      secure: eYfXNTDBSKOAM7HH+ew4DYRFBdtDTrHlr4FDk4WsmB9bWdBLkiO8NroygSMtEUQnfa7Suth+NdDRNuiyGbOOIxU3pV2Jzr4FXgGDc+6+QWklUGLSkpbEv3Qw6EvvKvv62TXKvVBIoq4NY5MCRGj918aCy396o00FKHhGeeANqbL7JFGhQbcNGki2EIUcqj9poGL8DrcCgzzfYu1DbupjMvV87j8Dy6CFJLBWjpS099S8oEjUkN2Pw3Fjg5taU5NbYPOu0/EO2EF1HGnXOCn6FQGnJ5RI3DoGjnXskLuNSUfgPsq3n11ivvklbruteZZDkEkYxKcHO0b7tia8oNIMFPQ8w5HCVPujfmxuzD2Jb5V84+luCMdad3iSKPuX23wBcVPrlnICwf12tfPZCLq2Vy3qv5evgmVrrHdOJ55Qr5QvkOKYKx8Y60YsAUKH3iDcKUvJp5g/Ien4rbhw3cEsIEneHpJJzXRJLrrU7TbTspHy6hONA9fVXTfRhm38uxqGl4wP3u8uJ6MzP4HjNFZCPN76j9oMYyiix5uqHAyKsJoqicnj1TScp7eD4YRn1tpa0g/PRAXlLoWiXLLi/gR2lNh2kpo1MIQJApLrBUregh5KDjRNAk8lpQItx6pk6NW/NR+MspS879vt3xMeD0nEku43QWc/9WIT58nn6WaMPy0=
