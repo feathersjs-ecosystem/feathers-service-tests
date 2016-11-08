@@ -20,7 +20,8 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
     );
 
     it('sets `events` property from options', () =>
-      expect(app.service(serviceName).events).to.deep.equal([ 'testing' ])
+      expect(app.service(serviceName).events.indexOf('testing'))
+        .to.not.equal(-1)
     );
 
     describe('extend', () => {
@@ -44,14 +45,26 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
         return app.service(serviceName).get(_ids.Doug).then(data => {
           expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
           expect(data.name).to.equal('Doug');
+          expect(data.age).to.equal(32);
+        });
+      });
+
+      it('supports $select', () => {
+        return app.service(serviceName).get(_ids.Doug, {
+          query: { $select: [ 'name' ] }
+        }).then(data => {
+          expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
+          expect(data.name).to.equal('Doug');
+          expect(data.age).to.not.exist();
         });
       });
 
       it('returns NotFound error for non-existing id', () => {
-        return app.service(serviceName).get('568225fbfe21222432e836ff').catch(error => {
-          expect(error instanceof errors.NotFound).to.be.ok;
-          expect(error.message).to.equal('No record found for id \'568225fbfe21222432e836ff\'');
-        });
+        return app.service(serviceName).get('568225fbfe21222432e836ff')
+          .catch(error => {
+            expect(error instanceof errors.NotFound).to.be.ok;
+            expect(error.message).to.equal('No record found for id \'568225fbfe21222432e836ff\'');
+          });
       });
     });
 
@@ -522,20 +535,23 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
         }).then(() => service.remove(null, params));
       });
 
-      it('patches multiple even if query changed', () => {
+      it('patches multiple, returns correct items', () => {
         const service = app.service(serviceName);
 
-        return service.create({
-          name: 'Dave',
-          age: 2,
-          created: true
-        }).then(() =>
-          service.create({
+        return service.create([{
+            name: 'Dave',
+            age: 2,
+            created: true
+          }, {
             name: 'David',
             age: 2,
             created: true
-          })
-        ).then(() =>
+          }, {
+            name: 'D',
+            age: 8,
+            created: true
+          }
+        ]).then(() =>
           service.patch(null, {
             age: 8
           }, { query: { age: 2 } }
