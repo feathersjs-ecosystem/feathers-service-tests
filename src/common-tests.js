@@ -187,6 +187,17 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
             .then(data => expect(data.length).to.equal(2));
         });
 
+        it('can $limit 0', () => {
+          const params = {
+            query: {
+              $limit: 0
+            }
+          };
+
+          app.service(serviceName).find(params)
+            .then(data => expect(data.length).to.equal(0));
+        });
+
         it('can $skip', () => {
           const params = {
             query: {
