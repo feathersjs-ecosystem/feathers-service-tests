@@ -57,7 +57,7 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
         }).then(data => {
           expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
           expect(data.name).to.equal('Doug');
-          expect(data.age).to.not.exist();
+          expect(data.age).to.not.exist;
         });
       });
 
