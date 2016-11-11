@@ -1,5 +1,74 @@
 # Change Log
 
+## [v0.9.0](https://github.com/feathersjs/feathers-service-tests/tree/v0.9.0) (2016-11-11)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.8.2...v0.9.0)
+
+**Closed issues:**
+
+- Add test for using $select with get [\#25](https://github.com/feathersjs/feathers-service-tests/issues/25)
+
+**Merged pull requests:**
+
+- Support $select in get and make sure patch many only returns changed items [\#32](https://github.com/feathersjs/feathers-service-tests/pull/32) ([daffl](https://github.com/daffl))
+- 👻😱 Node.js 0.10 is unmaintained 😱👻 [\#31](https://github.com/feathersjs/feathers-service-tests/pull/31) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+
+## [v0.8.2](https://github.com/feathersjs/feathers-service-tests/tree/v0.8.2) (2016-10-25)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.8.1...v0.8.2)
+
+**Merged pull requests:**
+
+- Install request as a dependency [\#28](https://github.com/feathersjs/feathers-service-tests/pull/28) ([daffl](https://github.com/daffl))
+- jshint —\> semistandard [\#26](https://github.com/feathersjs/feathers-service-tests/pull/26) ([corymsmith](https://github.com/corymsmith))
+
+## [v0.8.1](https://github.com/feathersjs/feathers-service-tests/tree/v0.8.1) (2016-09-28)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.8.0...v0.8.1)
+
+**Closed issues:**
+
+- Add test for `$sort` direction coming in as a string. [\#21](https://github.com/feathersjs/feathers-service-tests/issues/21)
+
+**Merged pull requests:**
+
+- Add test for sorting with strings [\#22](https://github.com/feathersjs/feathers-service-tests/pull/22) ([daffl](https://github.com/daffl))
+
+## [v0.8.0](https://github.com/feathersjs/feathers-service-tests/tree/v0.8.0) (2016-09-21)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.7.1...v0.8.0)
+
+**Merged pull requests:**
+
+- Add tests for proper multi patch [\#20](https://github.com/feathersjs/feathers-service-tests/pull/20) ([daffl](https://github.com/daffl))
+
+## [v0.7.1](https://github.com/feathersjs/feathers-service-tests/tree/v0.7.1) (2016-09-20)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.7.0...v0.7.1)
+
+**Merged pull requests:**
+
+- Verify id property for multiple updates [\#19](https://github.com/feathersjs/feathers-service-tests/pull/19) ([daffl](https://github.com/daffl))
+
+## [v0.7.0](https://github.com/feathersjs/feathers-service-tests/tree/v0.7.0) (2016-09-07)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.6.2...v0.7.0)
+
+**Merged pull requests:**
+
+- Improved shared service tests [\#18](https://github.com/feathersjs/feathers-service-tests/pull/18) ([daffl](https://github.com/daffl))
+- Upgrade to Mocha 3.x [\#17](https://github.com/feathersjs/feathers-service-tests/pull/17) ([daffl](https://github.com/daffl))
+- Update mocha to version 3.0.0 🚀 [\#16](https://github.com/feathersjs/feathers-service-tests/pull/16) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+- Update request-promise to version 4.0.0 🚀 [\#15](https://github.com/feathersjs/feathers-service-tests/pull/15) ([greenkeeperio-bot](https://github.com/greenkeeperio-bot))
+
+## [v0.6.2](https://github.com/feathersjs/feathers-service-tests/tree/v0.6.2) (2016-07-08)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.6.1...v0.6.2)
+
+**Merged pull requests:**
+
+- Also make sure that update and create do not modify their data [\#14](https://github.com/feathersjs/feathers-service-tests/pull/14) ([daffl](https://github.com/daffl))
+
+## [v0.6.1](https://github.com/feathersjs/feathers-service-tests/tree/v0.6.1) (2016-07-08)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.6.0...v0.6.1)
+
+**Merged pull requests:**
+
+- Make sure that id properties are not changed [\#13](https://github.com/feathersjs/feathers-service-tests/pull/13) ([daffl](https://github.com/daffl))
+
 ## [v0.6.0](https://github.com/feathersjs/feathers-service-tests/tree/v0.6.0) (2016-06-16)
 [Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.5.8...v0.6.0)
 
