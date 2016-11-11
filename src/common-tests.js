@@ -1,7 +1,9 @@
 import { expect } from 'chai';
 
 function common (app, errors, serviceName = 'people', idProp = 'id') {
-  describe(`Common tests, ${serviceName} service with ${idProp} id property`, () => {
+  describe(`Common tests, ${serviceName} service with` +
+      ` '${idProp}' id property`, () => {
+
     const _ids = {};
 
     beforeEach(() =>
@@ -20,7 +22,8 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
     );
 
     it('sets `events` property from options', () =>
-      expect(app.service(serviceName).events).to.deep.equal([ 'testing' ])
+      expect(app.service(serviceName).events.indexOf('testing'))
+        .to.not.equal(-1)
     );
 
     describe('extend', () => {
@@ -44,22 +47,44 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
         return app.service(serviceName).get(_ids.Doug).then(data => {
           expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
           expect(data.name).to.equal('Doug');
+          expect(data.age).to.equal(32);
+        });
+      });
+
+      it('supports $select', () => {
+        return app.service(serviceName).get(_ids.Doug, {
+          query: { $select: [ 'name' ] }
+        }).then(data => {
+          expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
+          expect(data.name).to.equal('Doug');
+          expect(data.age).to.not.exist;
         });
       });
 
       it('returns NotFound error for non-existing id', () => {
-        return app.service(serviceName).get('568225fbfe21222432e836ff').catch(error => {
-          expect(error instanceof errors.NotFound).to.be.ok;
-          expect(error.message).to.equal('No record found for id \'568225fbfe21222432e836ff\'');
-        });
+        return app.service(serviceName).get('568225fbfe21222432e836ff')
+          .catch(error => {
+            expect(error instanceof errors.NotFound).to.be.ok;
+            expect(error.message).to.equal('No record found for id \'568225fbfe21222432e836ff\'');
+          });
       });
     });
 
     describe('remove', () => {
       it('deletes an existing instance and returns the deleted instance', () => {
-        app.service(serviceName).remove(_ids.Doug).then(data => {
+        return app.service(serviceName).remove(_ids.Doug).then(data => {
           expect(data).to.be.ok;
           expect(data.name).to.equal('Doug');
+        });
+      });
+
+      it('deletes an existing instance supports $select', () => {
+        return app.service(serviceName).remove(_ids.Doug, {
+          query: { $select: [ 'name' ] }
+        }).then(data => {
+          expect(data).to.be.ok;
+          expect(data.name).to.equal('Doug');
+          expect(data.age).to.not.exist;
         });
       });
 
@@ -170,8 +195,19 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
             }
           };
 
-          app.service(serviceName).find(params)
+          return app.service(serviceName).find(params)
             .then(data => expect(data.length).to.equal(2));
+        });
+
+        it('can $limit 0', () => {
+          const params = {
+            query: {
+              $limit: 0
+            }
+          };
+
+          return app.service(serviceName).find(params)
+            .then(data => expect(data.length).to.equal(0));
         });
 
         it('can $skip', () => {
@@ -435,12 +471,28 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
         const originalData = { [idProp]: _ids.Doug, name: 'Dougler' };
         const originalCopy = Object.assign({}, originalData);
 
-        return app.service(serviceName).update(_ids.Doug, originalData).then(data => {
-          expect(originalData).to.deep.equal(originalCopy);
-          expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
-          expect(data.name).to.equal('Dougler');
-          expect(!data.age).to.be.ok;
-        });
+        return app.service(serviceName).update(_ids.Doug, originalData)
+          .then(data => {
+            expect(originalData).to.deep.equal(originalCopy);
+            expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
+            expect(data.name).to.equal('Dougler');
+            expect(!data.age).to.be.ok;
+          });
+      });
+
+      it('replaces an existing instance, supports $select', () => {
+        const originalData = {
+          [idProp]: _ids.Doug,
+          name: 'Dougler',
+          age: 10
+        };
+
+        return app.service(serviceName).update(_ids.Doug, originalData, {
+            query: { $select: [ 'name' ] }
+          }).then(data => {
+            expect(data.name).to.equal('Dougler');
+            expect(data.age).to.not.exist;
+          });
       });
 
       it('returns NotFound error for non-existing id', () => {
@@ -465,6 +517,17 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
             expect(data[idProp].toString()).to.equal(_ids.Doug.toString());
             expect(data.name).to.equal('PatchDoug');
             expect(data.age).to.equal(32);
+          });
+      });
+
+      it('updates an existing instance, supports $select', () => {
+        const originalData = { [idProp]: _ids.Doug, name: 'PatchDoug' };
+
+        return app.service(serviceName).patch(_ids.Doug, originalData, {
+            query: { $select: [ 'name' ] }
+          }).then(data => {
+            expect(data.name).to.equal('PatchDoug');
+            expect(data.age).to.not.exist;
           });
       });
 
@@ -522,20 +585,23 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
         }).then(() => service.remove(null, params));
       });
 
-      it('patches multiple even if query changed', () => {
+      it('patches multiple, returns correct items', () => {
         const service = app.service(serviceName);
 
-        return service.create({
-          name: 'Dave',
-          age: 2,
-          created: true
-        }).then(() =>
-          service.create({
+        return service.create([{
+            name: 'Dave',
+            age: 2,
+            created: true
+          }, {
             name: 'David',
             age: 2,
             created: true
-          })
-        ).then(() =>
+          }, {
+            name: 'D',
+            age: 8,
+            created: true
+          }
+        ]).then(() =>
           service.patch(null, {
             age: 8
           }, { query: { age: 2 } }
@@ -574,6 +640,20 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
           expect(data).to.not.be.empty;
           expect(data.name).to.equal('Bill');
         });
+      });
+
+      it('creates a single new instance, supports $select', () => {
+        const originalData = {
+          name: 'William',
+          age: 23
+        };
+
+        return app.service(serviceName).create(originalData, {
+            query: { $select: [ 'name' ] }
+          }).then(data => {
+            expect(data.name).to.equal('William');
+            expect(data.age).to.not.exist;
+          });
       });
 
       it('creates multiple new instances', () => {
