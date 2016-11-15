@@ -1,5 +1,12 @@
 # Change Log
 
+## [v0.9.1](https://github.com/feathersjs/feathers-service-tests/tree/v0.9.1) (2016-11-15)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.9.0...v0.9.1)
+
+**Merged pull requests:**
+
+- Do not pass an id to create [\#33](https://github.com/feathersjs/feathers-service-tests/pull/33) ([daffl](https://github.com/daffl))
+
 ## [v0.9.0](https://github.com/feathersjs/feathers-service-tests/tree/v0.9.0) (2016-11-11)
 [Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.8.2...v0.9.0)
 
