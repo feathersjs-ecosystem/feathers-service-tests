@@ -715,11 +715,11 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
         app.service(serviceName).get.call(throwing, _ids.Doug)
       );
 
-      it('create', () => app.service(serviceName).create.call(throwing, {
-        [idProp]: 33,
-        name: 'Bob',
-        age: 25
-      })
+      it('create', () => app.service(serviceName)
+        .create.call(throwing, {
+          name: 'Bob',
+          age: 25
+        })
       );
 
       it('update', () =>
