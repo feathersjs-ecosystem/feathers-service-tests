@@ -451,6 +451,11 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
           });
         });
 
+        it('$limit 0 with pagination', () => {
+          return app.service(serviceName).find({ query: { $limit: 0 } })
+            .then(paginator => expect(paginator.data.length).to.equal(0));
+        });
+
         it('allows to override paginate in params', () => {
           return app.service(serviceName)
             .find({ paginate: { default: 2 } })
