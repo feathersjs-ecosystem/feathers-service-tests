@@ -433,16 +433,26 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
         afterEach(() => (app.service(serviceName).paginate = {}));
 
         it('returns paginated object, paginates by default and shows total', () => {
-          return app.service(serviceName).find().then(paginator => {
-            expect(paginator.total).to.equal(3);
-            expect(paginator.limit).to.equal(1);
-            expect(paginator.skip).to.equal(0);
-            expect(paginator.data[0].name).to.equal('Doug');
-          });
+          return app.service(serviceName)
+            .find({ query: { $sort: { name: -1 } } })
+            .then(paginator => {
+              expect(paginator.total).to.equal(3);
+              expect(paginator.limit).to.equal(1);
+              expect(paginator.skip).to.equal(0);
+              expect(paginator.data[0].name).to.equal('Doug');
+            });
         });
 
         it('paginates max and skips', () => {
-          return app.service(serviceName).find({ query: { $skip: 1, $limit: 4 } }).then(paginator => {
+          const params = {
+            query: {
+              $skip: 1,
+              $limit: 4,
+              $sort: { name: -1 }
+            }
+          };
+
+          return app.service(serviceName).find(params).then(paginator => {
             expect(paginator.total).to.equal(3);
             expect(paginator.limit).to.equal(2);
             expect(paginator.skip).to.equal(1);
