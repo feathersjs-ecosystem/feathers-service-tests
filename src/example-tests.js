@@ -29,7 +29,11 @@ export default function (idProp = 'id', url = 'http://localhost:3030/todos') {
 
   describe('GET /', () => {
     it('GET / with default pagination', () => {
-      return request({ url, json: true }).then(page => {
+      return request({
+        url,
+        json: true,
+        qs: { $sort: { text: 1 } }
+      }).then(page => {
         expect(page.total).to.equal(3);
         expect(page.limit).to.equal(2);
         expect(page.skip).to.equal(0);
@@ -43,7 +47,7 @@ export default function (idProp = 'id', url = 'http://localhost:3030/todos') {
       return request({
         url,
         json: true,
-        qs: { $skip: 2 }
+        qs: { $skip: 2, $sort: { text: 1 } }
       }).then(page => {
         expect(page.total).to.equal(3);
         expect(page.limit).to.equal(2);
