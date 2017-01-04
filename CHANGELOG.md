@@ -1,5 +1,16 @@
 # Change Log
 
+## [v0.9.2](https://github.com/feathersjs/feathers-service-tests/tree/v0.9.2) (2017-01-04)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.9.1...v0.9.2)
+
+**Closed issues:**
+
+- Add test for $search [\#7](https://github.com/feathersjs/feathers-service-tests/issues/7)
+
+**Merged pull requests:**
+
+- Add tests for limit 0 with pagination [\#34](https://github.com/feathersjs/feathers-service-tests/pull/34) ([daffl](https://github.com/daffl))
+
 ## [v0.9.1](https://github.com/feathersjs/feathers-service-tests/tree/v0.9.1) (2016-11-15)
 [Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.9.0...v0.9.1)
 
