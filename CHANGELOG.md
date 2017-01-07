@@ -1,5 +1,12 @@
 # Change Log
 
+## [v0.9.3](https://github.com/feathersjs/feathers-service-tests/tree/v0.9.3) (2017-01-07)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.9.2...v0.9.3)
+
+**Merged pull requests:**
+
+- Do not rely on order of items returned without sorting. [\#35](https://github.com/feathersjs/feathers-service-tests/pull/35) ([jciolek](https://github.com/jciolek))
+
 ## [v0.9.2](https://github.com/feathersjs/feathers-service-tests/tree/v0.9.2) (2017-01-04)
 [Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.9.1...v0.9.2)
 
