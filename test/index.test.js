@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+
 import assert from 'assert';
 import * as plugin from '../src';
 
