@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-expressions */
+
 import { expect } from 'chai';
 
 function common (app, errors, serviceName = 'people', idProp = 'id') {
   describe(`Common tests, ${serviceName} service with` +
       ` '${idProp}' id property`, () => {
-
     const _ids = {};
 
     beforeEach(() =>
@@ -503,11 +504,11 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
         };
 
         return app.service(serviceName).update(_ids.Doug, originalData, {
-            query: { $select: [ 'name' ] }
-          }).then(data => {
-            expect(data.name).to.equal('Dougler');
-            expect(data.age).to.not.exist;
-          });
+          query: { $select: [ 'name' ] }
+        }).then(data => {
+          expect(data.name).to.equal('Dougler');
+          expect(data.age).to.not.exist;
+        });
       });
 
       it('returns NotFound error for non-existing id', () => {
@@ -539,11 +540,11 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
         const originalData = { [idProp]: _ids.Doug, name: 'PatchDoug' };
 
         return app.service(serviceName).patch(_ids.Doug, originalData, {
-            query: { $select: [ 'name' ] }
-          }).then(data => {
-            expect(data.name).to.equal('PatchDoug');
-            expect(data.age).to.not.exist;
-          });
+          query: { $select: [ 'name' ] }
+        }).then(data => {
+          expect(data.name).to.equal('PatchDoug');
+          expect(data.age).to.not.exist;
+        });
       });
 
       it('patches multiple instances', () => {
@@ -604,18 +605,18 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
         const service = app.service(serviceName);
 
         return service.create([{
-            name: 'Dave',
-            age: 2,
-            created: true
-          }, {
-            name: 'David',
-            age: 2,
-            created: true
-          }, {
-            name: 'D',
-            age: 8,
-            created: true
-          }
+          name: 'Dave',
+          age: 2,
+          created: true
+        }, {
+          name: 'David',
+          age: 2,
+          created: true
+        }, {
+          name: 'D',
+          age: 8,
+          created: true
+        }
         ]).then(() =>
           service.patch(null, {
             age: 8
@@ -664,11 +665,11 @@ function common (app, errors, serviceName = 'people', idProp = 'id') {
         };
 
         return app.service(serviceName).create(originalData, {
-            query: { $select: [ 'name' ] }
-          }).then(data => {
-            expect(data.name).to.equal('William');
-            expect(data.age).to.not.exist;
-          });
+          query: { $select: [ 'name' ] }
+        }).then(data => {
+          expect(data.name).to.equal('William');
+          expect(data.age).to.not.exist;
+        });
       });
 
       it('creates multiple new instances', () => {

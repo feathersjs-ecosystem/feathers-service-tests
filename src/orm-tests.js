@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+
 import { expect } from 'chai';
 
 export default function orm (people, _ids, errors) {
