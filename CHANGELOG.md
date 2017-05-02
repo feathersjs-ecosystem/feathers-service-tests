@@ -1,5 +1,18 @@
 # Change Log
 
+## [v0.10.0](https://github.com/feathersjs/feathers-service-tests/tree/v0.10.0) (2017-05-02)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.9.3...v0.10.0)
+
+**Closed issues:**
+
+- Update ORM tests to cover common requirements [\#38](https://github.com/feathersjs/feathers-service-tests/issues/38)
+
+**Merged pull requests:**
+
+- Update ORM tests to ensure plain objects are returned [\#39](https://github.com/feathersjs/feathers-service-tests/pull/39) ([DesignByOnyx](https://github.com/DesignByOnyx))
+- Update semistandard to the latest version 🚀 [\#37](https://github.com/feathersjs/feathers-service-tests/pull/37) ([greenkeeper[bot]](https://github.com/integration/greenkeeper))
+- Update dependencies to enable Greenkeeper 🌴 [\#36](https://github.com/feathersjs/feathers-service-tests/pull/36) ([greenkeeper[bot]](https://github.com/integration/greenkeeper))
+
 ## [v0.9.3](https://github.com/feathersjs/feathers-service-tests/tree/v0.9.3) (2017-01-07)
 [Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.9.2...v0.9.3)
 
