@@ -69,6 +69,12 @@ export default function orm (people, errors, idProp = 'id') {
           expect(Object.getPrototypeOf(result)).to.equal(Object.prototype)
         ).catch(noPOJO);
       });
+
+      it('returns a POJO for remove()', () => {
+        return people.remove(_ids.Doug).then(result =>
+          expect(Object.getPrototypeOf(result)).to.equal(Object.prototype)
+        ).catch(noPOJO);
+      });
     });
   });
 }
