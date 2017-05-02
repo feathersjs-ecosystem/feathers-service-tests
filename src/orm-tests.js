@@ -6,7 +6,7 @@ export default function orm (people, errors, idProp = 'id') {
   describe('Feathers ORM Common Tests', () => {
     it('wraps an ORM error in a feathers error', () => {
       return people.create({}).catch(error => {
-        expect(error instanceof errors.FeathersError).to.be.ok
+        expect(error instanceof errors.FeathersError).to.be.ok;
       });
     });
 
@@ -28,7 +28,7 @@ export default function orm (people, errors, idProp = 'id') {
         people.remove(_ids.Doug).catch(() => {})
       );
 
-      function noPOJO() {
+      function noPOJO () {
         // The prototype objects are huge and cause node to hang
         // when the reporter tries to log the errors to the console.
         throw new Error('The expected result was not a POJO.');
