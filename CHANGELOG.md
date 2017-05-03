@@ -1,5 +1,15 @@
 # Change Log
 
+## [v0.10.2](https://github.com/feathersjs/feathers-service-tests/tree/v0.10.2) (2017-05-03)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.10.1...v0.10.2)
+
+**Merged pull requests:**
+
+- Update ORM tests to cover revove\(\) method [\#40](https://github.com/feathersjs/feathers-service-tests/pull/40) ([DesignByOnyx](https://github.com/DesignByOnyx))
+
+## [v0.10.1](https://github.com/feathersjs/feathers-service-tests/tree/v0.10.1) (2017-05-02)
+[Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.10.0...v0.10.1)
+
 ## [v0.10.0](https://github.com/feathersjs/feathers-service-tests/tree/v0.10.0) (2017-05-02)
 [Full Changelog](https://github.com/feathersjs/feathers-service-tests/compare/v0.9.3...v0.10.0)
 
