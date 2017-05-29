@@ -55,7 +55,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "chai": "^3.4.0",
+    "chai": "^4.0.0",
     "request": "^2.75.0",
     "request-promise": "^4.0.0"
   },
