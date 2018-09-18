@@ -29,6 +29,9 @@ feathers-service-tests is a test harness for different database service adapters
 - [feathers-localstorage](https://github.com/feathersjs/feathers-localstorage)
 - [feathers-rethinkdb](https://github.com/feathersjs/feathers-rethinkdb)
 - [feathers-elasticsearch](https://github.com/feathersjs/feathers-elasticsearch)
+- [feathers-objection](https://github.com/mcchrish/feathers-objection)
+- [feathers-service-tests-cassandra](https://github.com/dekelev/feathers-service-tests-cassandra) (fork)
+- [feathers-cassandra](https://github.com/dekelev/feathers-cassandra)
 
 ## License
 
